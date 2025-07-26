@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>Happy Birthday!</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <div class="container">
+            <h1>🎉 Happy Birthday, Bipasha! 🎂</h1>
+            <p class="highlight">Wishing you a day filled with love, laughter, and surprises!</p>
+            <p class="wish-highlight">Some wishes are never said out loud… but today, I just hope your smile never fades. And as you step into your <span class="age-highlight">20s</span>, may each moment ahead be brighter, kinder, and full of magic just like you.</p>
+            <img src="her-photo.jpg" alt="Birthday Girl" class="friend-photo" />
+            <p>Your presence is like a quiet sunrise — soft, warm, and impossible to ignore. 🌟</p>
+            <button onclick="showSurprise()">Click for a surprise!</button>
+
+            <div id="surprise" style="display: none;">
+                <div class="carousel-container">
+                    <div class="memories-heading-box">
+                        <h2 class="memories-heading">📸 Our Little Memories</h2>
+                    </div>
+                    <div class="carousel" id="memory-carousel">
+                        <div class="carousel-item active">
+                            <img src="images/memory1.jpg" alt="Memory 1" />
+                            <h3 class="caption">The day we met, 24<sup>th</sup> march</h3>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="images/memory2.jpg" alt="Memory 2" />
+                            <h3 class="caption">Your cute attitude</h3>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="images/memory3.jpg" alt="Memory 3" />
+                            <h3 class="caption">Moments during our gameplay</h3>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="images/memory4.jpg" alt="Memory 4" />
+                            <h3 class="caption">Another moment</h3>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="images/memory5.jpg" alt="Memory 5" />
+                            <h3 class="caption">The special one 💝</h3>
+                        </div>
+                    </div>
+                </div>
+                <div id="heart-reveal">
+                    <div id="big-heart">💝</div>
+                    <div id="typing-message" style="display: none;"></div>
+                </div>
+
+                <div class="letter">
+                    <p>Dear <b>Bipasha</b>,</p>
+                    <p>I built this little website just for you. You're not just a friend, you're special. 🎂</p>
+                    <p>~ From <b>Rudranil</b> 💓</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="hearts"></div>
+        <audio id="bg-music" src="bg-music.mp3" autoplay loop></audio>
+        <canvas id="fireworks" style="display: none;"></canvas>
+        <div id="balloon-container"></div>
+
+        <script>
+            function createHeart() {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                const emojis = ['💗', '💖', '💓', '💝', '💞', '💕'];
+                heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 2 + 3) + 's';
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 6000);
+            }
+            setInterval(createHeart, 500);
+        </script>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const music = document.getElementById("bg-music");
+                document.body.addEventListener("click", function () {
+                    if (music.paused) {
+                        music.play().catch((err) => {
+                            console.log("Autoplay blocked:", err);
+                        });
+                    }
+                });
+            });
+        </script>
+
+        <script>
+            const canvas = document.getElementById('fireworks');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            function random(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+            function Firework() {
+                this.x = random(0, canvas.width);
+                this.y = canvas.height;
+                this.color = `hsl(${random(300, 360)}, 100%, 70%)`;
+                this.particles = [];
+
+                for (let i = 0; i < 20; i++) {
+                    this.particles.push({
+                        x: this.x,
+                        y: this.y,
+                        radius: random(1, 2),
+                        color: this.color,
+                        angle: Math.random() * 2 * Math.PI,
+                        speed: random(1, 4),
+                        alpha: 1
+                    });
+                }
+
+                this.update = () => {
+                    this.particles.forEach(p => {
+                        p.x += Math.cos(p.angle) * p.speed;
+                        p.y += Math.sin(p.angle) * p.speed;
+                        p.alpha -= 0.02;
+                    });
+                };
+
+                this.draw = () => {
+                    this.particles.forEach(p => {
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(255, 105, 180, ${p.alpha})`;
+                        ctx.fill();
+                    });
+                };
+            }
+            let fireworks = [];
+            let animationStarted = false;
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                if (Math.random() < 0.03) {
+                    fireworks.push(new Firework());
+                }
+                fireworks.forEach(f => {
+                    f.update();
+                    f.draw();
+                });
+                fireworks = fireworks.filter(f => f.particles.some(p => p.alpha > 0));
+                requestAnimationFrame(animate);
+            }
+            function startFireworks() {
+                if (!animationStarted) {
+                    canvas.style.display = "block";
+                    animate();
+                    animationStarted = true;
+                }
+            }
+        </script>
+
+        <script>
+            let currentSlide = 0;
+            function showSlide(index) {
+                const slides = document.querySelectorAll('.carousel-item');
+                slides.forEach((slide, i) => {
+                    slide.classList.toggle('active', i === index);
+                });
+            }
+            function nextSlide() {
+                const slides = document.querySelectorAll('.carousel-item');
+                currentSlide = (currentSlide + 1) % slides.length;
+                showSlide(currentSlide);
+            }
+            function prevSlide() {
+                const slides = document.querySelectorAll('.carousel-item');
+                currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+                showSlide(currentSlide);
+            }
+            setInterval(() => {
+                const surpriseVisible = document.getElementById('surprise').style.display === "block";
+                if (surpriseVisible) nextSlide();
+            }, 5000);
+        </script>
+
+        <script>
+            function showSurprise() {
+                document.getElementById("surprise").style.display = "block";
+                startFireworks();
+            }
+        </script>
+        <script>
+            function createBalloon() {
+                const balloon = document.createElement("div");
+                balloon.className = "balloon";
+                const colors = ["#ff69b4", "#f06292", "#e91e63", "#ba68c8", "#f48fb1"];
+                balloon.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                balloon.style.left = Math.random() * 100 + "vw";
+                balloon.style.animationDuration = (6 + Math.random() * 4) + "s";
+                document.getElementById("balloon-container").appendChild(balloon);
+                setTimeout(() => {
+                    balloon.remove();
+                }, 10000);
+            }
+            setInterval(createBalloon, 500);
+        </script>
+        <script>
+            const bigHeart = document.getElementById("big-heart");
+            const typingContainer = document.getElementById("typing-message");
+            const paragraphs = [
+                "There's so much I want to say… but for now, I just hope your heart feels full today. I may never say it aloud, but you're a little more special to me than you'll ever know.",
+                "So here it is, once again — শুভ জন্মদিন বিপাশা 💖"
+            ];
+            const highlightPhrase = "শুভ জন্মদিন বিপাশা";
+            let currentPara = 0;
+            let charIndex = 0;
+            let currentElement;
+            function type() {
+                if (currentPara >= paragraphs.length) return;
+                const text = paragraphs[currentPara];
+                const currentChar = text.charAt(charIndex);
+                if (charIndex === 0) {
+                    currentElement = document.createElement("p");
+                    typingContainer.appendChild(currentElement);
+                }
+                currentElement.innerHTML += currentChar;
+                charIndex++;            
+                if (charIndex <= text.length) {
+                    setTimeout(type, 65);
+                } else {
+                    if (currentPara === 1) {
+                        const html = currentElement.innerHTML;
+                        const highlighted = html.replace(
+                            highlightPhrase,
+                            `<b class="highlight">${highlightPhrase}</b>`
+                        );
+                        currentElement.innerHTML = highlighted;
+                    }
+                    currentPara++;
+                    charIndex = 0;
+                    setTimeout(type, 600);
+                }
+            }
+            bigHeart.addEventListener("click", () => {
+                bigHeart.style.display = "none";
+                typingContainer.style.display = "block";
+                setTimeout(type, 800);
+            });
+        </script>
+
+    </body>
+</html>
